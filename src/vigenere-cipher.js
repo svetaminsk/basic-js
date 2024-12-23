@@ -20,13 +20,42 @@ const { NotImplementedError } = require('../extensions/index.js');
  * 
  */
 class VigenereCipheringMachine {
-  encrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  constructor(reverse = true) {
+    this.reverse = reverse;
   }
-  decrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+
+  encrypt(message, key) {
+    if (!message || !key) {
+      throw new Error("Incorrect arguments!");
+    }
+    let diff = 0;
+    const code = message.toUpperCase().split('').map((el, ind) => {
+      const crypt = el.codePointAt(0);
+      const keyStr = key.toUpperCase();
+      if (crypt >= 65 && crypt <= 90) {
+        return String.fromCodePoint(((crypt + keyStr.codePointAt((ind - diff) % keyStr.length)) % 26) + 65);
+      }
+      diff++;
+      return el;
+    });
+    return this.reverse ? code.join('') : code.reverse().join('');
+  }
+
+  decrypt(message, key) {
+    if (!message || !key) {
+      throw new Error("Incorrect arguments!");
+    }
+    let diff = 0;
+    let code = message.toUpperCase().split('').map((el, ind) => {
+      const crypt = el.codePointAt(0);
+      const keyStr = key.toUpperCase();
+      if (crypt >= 65 && crypt <= 90) {
+        return String.fromCodePoint(((26 + (crypt - keyStr.codePointAt((ind - diff) % keyStr.length))) % 26) + 65);
+      }
+      diff++;
+      return el;
+    });
+    return this.reverse ? code.join('') : code.reverse().join('');
   }
 }
 
